@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="{% static 'echarts.js' %}"></script>
+    <script src="{% static 'jquery.js' %}"></script>
+    <title>2019年7月汽车销量</title>
+</head>
+<body>
+
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="main" style="width: 600px;height:400px;"></div>
+    
+
+    <script type="text/javascript">
+        var car_list;
+        var sale_list;
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        
+        $.ajax({
+            url: '/get_data/',
+            type: 'get',
+            dataType: 'json',
+            success:function (data) {
+                // todo
+                car_list = data.car_list;
+                sale_list = data.sale_list;
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '2019年7月新车销量'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['销量']
+                    },
+                    xAxis: {
+                        data: car_list,
+                        // 让横轴的中文竖行显示
+                        axisLabel:{
+                            formatter:function(value){
+                                return value.split("").join("\n")
+                            }
+                        }
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: sale_list
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            },
+            error:function (data) {
+                alert('Ajax请求失败！');
+            },
+        });
+
+
+
+        
+    </script>
+</body>
+</html>
